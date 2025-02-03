@@ -1,0 +1,159 @@
+/* assets/style.css */
+
+/* Import Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+/* General Styles */
+body {
+    background-color: #f9fafb; /* Light gray background */
+    color: #333333; /* Dark text for readability */
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Sidebar Styles */
+.sidebar .sidebar-content {
+    background-color: #ffffff; /* White background */
+    padding: 20px;
+}
+
+.sidebar a {  /* Sidebar links */
+    color: #1f77b4; /* Primary color for links */
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.sidebar a:hover {
+    color: #ff7f0e; /* Hover color */
+}
+
+/* Header Styles */
+h1, .css-1aumxhk {
+    color: #1f77b4; /* Primary color for headers */
+    font-weight: bold;
+    text-align: center;
+}
+
+h2, h3, h4 {
+    color: #333333;
+    font-weight: 600;
+}
+
+/* Button Styles */
+.stButton > button {
+    background-color: #1f77b4;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.stButton > button:hover {
+    background-color: #ff7f0e; /* Change color on hover */
+    transform: scale(1.05);
+}
+
+/* Input Field Styles */
+.stTextInput > div > div > input {
+    border: 2px solid #1f77b4;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 16px;
+}
+
+.stFileUploader > div > div {
+    border: 2px dashed #1f77b4;
+    border-radius: 8px;
+    padding: 20px;
+    background-color: #ffffff;
+}
+
+.stFileUploader > div > div:hover {
+    background-color: #f0f0f0;
+}
+
+/* Image Styles */
+img {
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 100%;
+    height: auto;
+}
+
+/* Success, Error, Warning, Info Messages */
+div.stAlert > div > div > p {
+    font-size: 16px;
+}
+
+div.stAlert > div {
+    border-left: 5px solid #1f77b4;
+    padding-left: 10px;
+}
+
+/* Expanders */
+.stExpander > div > button {
+    background-color: #1f77b4;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.stExpander > div > button:hover {
+    background-color: #ff7f0e;
+    transform: scale(1.05);
+}
+
+/* Footer Styles */
+footer {
+    visibility: hidden;
+}
+
+.css-1aumxhk, .css-1kyxreq { /* Hide default Streamlit footer and hamburger menu */
+    visibility: hidden;
+}
+
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #1f77b4;
+    border-radius: 6px;
+    border: 3px solid #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #ff7f0e;
+}
+
+/* Card Styles */
+.card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.card h3 {
+    margin-top: 0;
+}
+
+/* Caption Styles */
+.caption {
+    font-size: 14px;
+    color: #555555;
+    text-align: center;
+}
