@@ -17,15 +17,15 @@ st.set_page_config(
 )
 
 
-# def check_server_health():
-#     try:
-#         response = requests.get(f"{BASE_URL}/healthz", timeout=5)
-#         if response.status_code == 200:
-#             return True
-#         else:
-#             return False
-#     except requests.RequestException:
-#         return False
+def check_server_health():
+    try:
+        response = requests.get(f"{BASE_URL}/healthz", timeout=5)
+        if response.status_code == 200:
+            return True
+        else:
+            return False
+    except requests.RequestException:
+        return False
     
 # Función para cargar CSS local
 def load_css(file_name):
@@ -54,12 +54,12 @@ Usa la barra lateral para navegar entre las funcionalidades disponibles:
 """)
 
 
-# if st.button('Check Server Health'):
-#     is_healthy = check_server_health()
-#     if is_healthy:
-#         st.success('✅ Server is up and running!')
-#     else:
-#         st.error('❌ Server is down or unresponsive.')
+if st.button('Check Server Health'):
+    is_healthy = check_server_health()
+    if is_healthy:
+        st.success('✅ Server is up and running!')
+    else:
+        st.error('❌ Server is down or unresponsive.')
 # Pie de Página
 st.markdown("---")
 st.markdown("© 2025 Equipo de Detección de Melanoma. Todos los derechos reservados.")
