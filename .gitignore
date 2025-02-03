@@ -1,0 +1,17 @@
+# Ignorar archivos temporales del sistema
+.DS_Store
+Thumbs.db
+
+# Ignorar dependencias de Python
+venv/
+__pycache__/
+*.pyc
+
+# Ignorar credenciales y archivos de configuración
+.env
+config.json
+
+# Ignorar logs y caché
+logs/
+*.log
+cache/
