@@ -5,8 +5,12 @@ from PIL import Image
 from datetime import datetime
 import base64
 from streamlit_js_eval import streamlit_js_eval
+from dotenv import load_dotenv
+import os
 
-BASE_URL = "http://localhost:8080"
+load_dotenv()  # Load environment variables from .env file
+
+BASE_URL = os.getenv("BASE_URL", "http://localhost:8080")
 
 st.set_page_config(
     page_title="Subir y Segmentar",

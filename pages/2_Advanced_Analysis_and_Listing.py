@@ -5,7 +5,12 @@ import base64
 from io import BytesIO
 from PIL import Image
 
-BASE_URL = "http://localhost:8080"
+from dotenv import load_dotenv
+import os
+
+load_dotenv()  # Load environment variables from .env file
+
+BASE_URL = os.getenv("BASE_URL", "http://localhost:8080")
 
 st.set_page_config(
     page_title="Análisis Avanzado y Listado",
