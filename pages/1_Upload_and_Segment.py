@@ -1,3 +1,4 @@
+# frontend/pages/1_Upload_and_Segment.py
 import streamlit as st
 import requests
 from io import BytesIO
@@ -8,8 +9,7 @@ from streamlit_js_eval import streamlit_js_eval
 from dotenv import load_dotenv
 import os
 
-load_dotenv()  # Load environment variables from .env file
-
+load_dotenv()
 BASE_URL = os.getenv("BASE_URL", "http://localhost:8080")
 
 st.set_page_config(
@@ -19,82 +19,87 @@ st.set_page_config(
 )
 
 def load_css(file_name):
-    with open(file_name) as f:
-        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+    try:
+        with open(file_name) as f:
+            st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+    except:
+        pass
 
 load_css("./assets/style.css")
+
+# Check if user is logged in
+if "access_token" not in st.session_state or not st.session_state["access_token"]:
+    st.warning("Necesitas iniciar sesión antes de subir imágenes.")
+    st.stop()
 
 st.title("🖼️ Subir y Segmentar")
 st.markdown("### Sube una imagen para la detección y segmentación de melanoma")
 
-username = st.text_input("Nombre de usuario", placeholder="ej. juan_perez")
-age = st.number_input("Edad (opcional)", min_value=0, max_value=120, value=0, step=1)
+token = st.session_state["access_token"]
+username_state = st.session_state["logged_in_user"]
 
-# 1) Lista cerrada de partes del cuerpo
-body_part_options = [
-    "Brazo izquierdo",
-    "Brazo derecho",
-    "Tórax",
-    "Espalda",
-    "Pierna izquierda",
-    "Pierna derecha",
-    "Cuello",
-    "Cabeza/Cara",
-    "Otra",            # <-- Para permitir un texto libre
-    "No especificar"   # <-- Por si el usuario no quiere dar info
-]
+col_left, col_right = st.columns(2)
 
-selected_body_part = st.selectbox("Seleccione la parte del cuerpo", options=body_part_options, index=len(body_part_options)-1)
+with col_left:
+    # Data about the user / lesion
+    st.subheader("Datos de la Lesión")
+    st.write(f"Usuario actual: `{username_state}` (solo puedes subir para tu cuenta).")
+    age = st.number_input("Edad (opcional)", min_value=0, max_value=120, value=30, step=1)
 
-# 2) Si el usuario elige "Otra", mostramos un input adicional
-body_part = None
-if selected_body_part == "Otra":
-    body_part_custom = st.text_input("Describe la parte del cuerpo")
-    if body_part_custom:
-        body_part = body_part_custom
-elif selected_body_part == "No especificar":
-    body_part = None
-else:
-    body_part = selected_body_part
+    body_part_options = [
+        "Brazo izquierdo",
+        "Brazo derecho",
+        "Tórax",
+        "Espalda",
+        "Pierna izquierda",
+        "Pierna derecha",
+        "Cuello",
+        "Cabeza/Cara",
+        "Otra",
+        "No especificar"
+    ]
+    selected_body_part = st.selectbox("Parte del cuerpo", options=body_part_options, index=len(body_part_options)-1)
+    if selected_body_part == "Otra":
+        body_part_custom = st.text_input("Describe la parte del cuerpo")
+        body_part = body_part_custom if body_part_custom else "Otra"
+    elif selected_body_part == "No especificar":
+        body_part = ""
+    else:
+        body_part = selected_body_part
 
-diameter_larger_than_pencil = st.checkbox("¿Crees que el diámetro supera el grosor de un lápiz?")
+    diameter_larger_than_pencil = st.checkbox(
+        "¿Diámetro supera ~6 mm (grosor de un lápiz)?",
+        help="El melanoma generalmente excede 6 mm en diámetro."
+    )
 
-# Obtener geolocalización del navegador
-location = streamlit_js_eval(js_expressions="navigator.geolocation.getCurrentPosition", key="get_location")
+with col_right:
+    st.subheader("Ubicación y Comentarios")
+    location = streamlit_js_eval(js_expressions="navigator.geolocation.getCurrentPosition", key="get_location")
 
-geolocation_city = st.text_input("Ciudad (opcional)")
-geolocation_region = st.text_input("Región (opcional)")
+    geolocation_city = st.text_input("Ciudad (opcional)")
+    geolocation_region = st.text_input("Región (opcional)")
+    additional_comment = st.text_area("Comentario adicional (opcional)", help="¿Sientes picazón, cambio de color, etc.?")
 
-geolocation_lat = None
-geolocation_lon = None
+    # Timestamp if you want
+    selected_date = st.date_input("Fecha de subida (opcional)", value=datetime.now().date())
+    selected_time = st.time_input("Hora de subida (opcional)", value=datetime.now().time())
+    timestamp = datetime.combine(selected_date, selected_time) if selected_date and selected_time else None
 
-if location:
-    geolocation_lat = location.coords.latitude
-    geolocation_lon = location.coords.longitude
+    geolocation_lat = None
+    geolocation_lon = None
+    if location:
+        geolocation_lat = location.coords.latitude
+        geolocation_lon = location.coords.longitude
 
-    # Realizar geocodificación inversa para obtener ciudad y región
-    try:
-        response = requests.get(f'https://ipapi.co/{geolocation_lat},{geolocation_lon}/json/')
-        if response.status_code == 200:
-            data = response.json()
-            geolocation_city = data.get('city', '')
-            geolocation_region = data.get('region', '')
-    except requests.RequestException as e:
-        st.error(f"Error al obtener la ubicación: {e}")
-
-additional_comment = st.text_area("Comentario adicional (opcional)", help="¿Sientes picazón, cambio de color, etc.?")
-selected_date = st.date_input("Fecha de subida (opcional)", value=datetime.now().date())
-selected_time = st.time_input("Hora de subida (opcional)", value=datetime.now().time())
-timestamp = datetime.combine(selected_date, selected_time) if selected_date and selected_time else None
-
-uploaded_file = st.file_uploader("Selecciona una imagen (JPG o PNG)", type=["jpg", "jpeg", "png"])
+# File upload
+uploaded_file = st.file_uploader("Selecciona una imagen (JPG, PNG)", type=["jpg", "jpeg", "png"])
 
 if uploaded_file:
     st.image(uploaded_file, caption="🖼️ Imagen original subida", use_container_width=True, clamp=True)
 
 if st.button("🚀 Enviar para segmentación y clasificación"):
-    if not username:
-        st.warning("⚠️ Por favor, ingresa un nombre de usuario.")
+    if not username_state:
+        st.warning("⚠️ Usuario no definido.")
     elif not uploaded_file:
         st.warning("⚠️ Por favor, sube una imagen.")
     else:
@@ -102,9 +107,9 @@ if st.button("🚀 Enviar para segmentación y clasificación"):
             "file": (uploaded_file.name, uploaded_file, uploaded_file.type)
         }
         data = {
-            "username": username,
+            "username": username_state,
             "age": str(age) if age else "",
-            "body_part": body_part if body_part else "",
+            "body_part": body_part,
             "diameter_larger_than_pencil": str(diameter_larger_than_pencil),
             "geolocation_city": geolocation_city,
             "geolocation_region": geolocation_region,
@@ -112,13 +117,14 @@ if st.button("🚀 Enviar para segmentación y clasificación"):
             "geolocation_lon": geolocation_lon,
             "additional_comment": additional_comment
         }
-
         if timestamp:
             data["timestamp"] = timestamp.isoformat()
 
+        headers = {"Authorization": f"Bearer {token}"}
+
         with st.spinner("Procesando..."):
             try:
-                resp = requests.post(f"{BASE_URL}/upload_image", files=files, data=data, timeout=60)
+                resp = requests.post(f"{BASE_URL}/upload_image", files=files, data=data, headers=headers, timeout=60)
                 if resp.status_code == 200:
                     result_json = resp.json()
                     st.success("✅ ¡Imagen procesada exitosamente!")
@@ -140,6 +146,10 @@ if st.button("🚀 Enviar para segmentación y clasificación"):
                             use_container_width=True,
                             clamp=True
                         )
+                elif resp.status_code == 400:
+                    # Possibly daily limit or other validation
+                    detail = resp.json().get("detail", "Error desconocido.")
+                    st.error(f"❌ {detail}")
                 else:
                     st.error(f"❌ Error {resp.status_code}: {resp.text}")
             except requests.RequestException as e:

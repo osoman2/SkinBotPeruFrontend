@@ -1,14 +1,13 @@
-# main.py
+# frontend/main.py
+import os
 import streamlit as st
 from PIL import Image
-import requests
-import os
 from dotenv import load_dotenv
 
 load_dotenv()  # Load environment variables from .env file
 
 BASE_URL = os.getenv("BASE_URL", "http://localhost:8080")
-# --- Configuración de la Página de Streamlit ---
+
 st.set_page_config(
     page_title="Aplicación de Detección de Melanoma",
     page_icon="🩺",
@@ -16,50 +15,35 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-
-def check_server_health():
-    try:
-        response = requests.get(f"{BASE_URL}/healthz", timeout=5)
-        if response.status_code == 200:
-            return True
-        else:
-            return False
-    except requests.RequestException:
-        return False
-    
-# Función para cargar CSS local
+# Optional: define a function to load local CSS
 def load_css(file_name):
-    with open(file_name) as f:
-        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+    try:
+        with open(file_name) as f:
+            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+    except FileNotFoundError:
+        pass
 
-# Cargar el CSS
 load_css("assets/style.css")
 
-# Cargar y mostrar el logo
-logo = Image.open("assets/logo.png")
-st.sidebar.image(logo, width=150)
+# Sidebar logo
+try:
+    logo = Image.open("assets/logo.png")
+    st.sidebar.image(logo, width=150)
+except:
+    st.sidebar.write("Logo here")
 
-# Título de la Aplicación
 st.title("Bienvenido a la Aplicación de Detección de Melanoma 🩺")
 
-# Introducción
 st.markdown("""
 ### Detección de Melanoma con Precisión
 
-Esta aplicación permite a los usuarios subir imágenes de la piel para la detección de melanoma y realizar análisis avanzados sobre los datos procesados.
+Esta aplicación permite a los usuarios subir imágenes de la piel para la alerta de examinación para el despistaje de melanoma.
+No solo eso! En MELIA ofrecemos un seguimiento de las lesiones detectadas, permitiendo a los pacientes monitorear el progreso y el tratamiento y hacerlo parte del proceso.
 
-Usa la barra lateral para navegar entre las funcionalidades disponibles:
-- **Subir y Segmentar**: Sube tu imagen de la piel y obtén resultados de segmentación y clasificación.
-- **Análisis Avanzado y Listado**: Realiza análisis avanzados y visualiza todos los datos de los usuarios.
+Navegación:
+- Usa el menú de la izquierda para **Iniciar sesión**, **Subir** una imagen, realizar **Análisis Avanzado**, o ver tu **Historial**.
+- Si no tienes una cuenta, regístrate en la sección [Login / Register].
 """)
 
-
-if st.button('Check Server Health'):
-    is_healthy = check_server_health()
-    if is_healthy:
-        st.success('✅ Server is up and running!')
-    else:
-        st.error('❌ Server is down or unresponsive.')
-# Pie de Página
 st.markdown("---")
 st.markdown("© 2025 Equipo de Detección de Melanoma. Todos los derechos reservados.")
