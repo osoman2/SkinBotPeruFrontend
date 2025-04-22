@@ -157,3 +157,60 @@ footer {
     color: #555555;
     text-align: center;
 }
+
+/* Nuevos estilos para las tabs */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 2px;
+    background-color: #f0f2f6;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.stTabs [data-baseweb="tab"] {
+    height: 50px;
+    padding: 10px 20px;
+    background-color: white;
+    border-radius: 8px;
+    color: #1f77b4;
+    font-weight: 600;
+}
+
+.stTabs [data-baseweb="tab-highlight"] {
+    background-color: #1f77b4;
+}
+
+/* Estilos para los expanders de imágenes pendientes */
+.stExpander {
+    margin-bottom: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: white;
+}
+
+/* Botón de análisis */
+.stButton > button[key^="analyze_"] {
+    background-color: #28a745;
+    color: white;
+    width: 100%;
+}
+
+.stButton > button[key^="analyze_"]:hover {
+    background-color: #218838;
+    transform: scale(1.02);
+}
+
+/* Indicadores de estado */
+.status-pending {
+    color: #ffc107;
+    font-weight: bold;
+}
+
+.status-completed {
+    color: #28a745;
+    font-weight: bold;
+}
+
+/* Spinner personalizado */
+.stSpinner {
+    border-color: #1f77b4;
+}

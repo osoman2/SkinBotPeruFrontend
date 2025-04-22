@@ -15,6 +15,8 @@ if "logged_in_user" not in st.session_state:
     st.session_state["logged_in_user"] = None
 if "role" not in st.session_state:
     st.session_state["role"] = "user"  # default or "admin" if needed
+if "show_success" not in st.session_state:
+    st.session_state["show_success"] = False
 
 st.title("🔑 Iniciar Sesión / Registro")
 
@@ -39,14 +41,18 @@ with tab_login:
                     data = resp.json()
                     st.session_state["access_token"] = data["access_token"]
                     st.session_state["logged_in_user"] = login_user
-                    # If the backend returns a role, you could store it
-                    # st.session_state["role"] = data.get("role", "user")
-                    st.success(f"Bienvenido/a, {login_user}")
-                    st.rerun()  # refresh page
+                    st.session_state["show_success"] = True
+                    st.success(f"¡Bienvenido/a, {login_user}! Redirigiendo...")
+                    st.rerun()
                 else:
                     st.error(f"Error {resp.status_code}: {resp.json().get('detail', 'Credenciales inválidas')}")
             except requests.RequestException as e:
                 st.error(f"No se pudo conectar con el servidor: {e}")
+
+# Show success message if just logged in
+if st.session_state["show_success"]:
+    st.success(f"Has iniciado sesión correctamente como {st.session_state['logged_in_user']}")
+    st.session_state["show_success"] = False  # Reset the flag
 
 with tab_register:
     st.subheader("Crear Cuenta")
@@ -77,4 +83,5 @@ if st.session_state["access_token"]:
     if st.button("Cerrar Sesión"):
         st.session_state["access_token"] = None
         st.session_state["logged_in_user"] = None
+        st.session_state["show_success"] = False
         st.rerun()

@@ -69,7 +69,7 @@ with col_left:
 
     diameter_larger_than_pencil = st.checkbox(
         "¿Diámetro supera ~6 mm (grosor de un lápiz)?",
-        help="El melanoma generalmente excede 6 mm en diámetro."
+        help="Puede usar un lápiz o un objeto similar para estimar el diámetro."
     )
 
 with col_right:
@@ -96,6 +96,17 @@ uploaded_file = st.file_uploader("Selecciona una imagen (JPG, PNG)", type=["jpg"
 
 if uploaded_file:
     st.image(uploaded_file, caption="🖼️ Imagen original subida", use_container_width=True, clamp=True)
+
+def delete_image(image_id: str, headers: dict) -> bool:
+    try:
+        resp = requests.delete(
+            f"{BASE_URL}/delete_image/{image_id}",
+            headers=headers,
+            timeout=30
+        )
+        return resp.status_code == 200
+    except requests.RequestException:
+        return False
 
 if st.button("🚀 Enviar para segmentación y clasificación"):
     if not username_state:
@@ -129,13 +140,27 @@ if st.button("🚀 Enviar para segmentación y clasificación"):
                     result_json = resp.json()
                     st.success("✅ ¡Imagen procesada exitosamente!")
                     
-                    first_class = result_json.get("first_classification", "N/A")
+                    image_id = result_json.get("id")
+                    col1, col2 = st.columns([0.9, 0.1])
+                    
+                    with col1:
+                        first_class = result_json.get("first_classification", "N/A")
+                        st.markdown(f"**Primera clasificación**: `{first_class}`")
+                    
+                    with col2:
+                        if st.button("🗑️", key=f"delete_new_img_{image_id}", help="Delete this image"):
+                            if st.warning("⚠️ Are you sure you want to delete this image?"):
+                                if delete_image(image_id, headers):
+                                    st.success("Image deleted successfully!")
+                                    st.rerun()
+                                else:
+                                    st.error("Failed to delete image")
+                    
                     seg_result = result_json.get("segmentation_result", {})
                     seg_b64 = result_json.get("segmented_image_b64", None)
 
-                    st.markdown(f"**Primera clasificación**: `{first_class}`")
-                    with st.expander("🔍 Ver segmentación JSON", expanded=False):
-                        st.json(seg_result)
+                    # with st.expander("🔍 Ver segmentación JSON", expanded=False):
+                    #     st.json(seg_result)
 
                     if seg_b64:
                         overlay_bytes = base64.b64decode(seg_b64)
