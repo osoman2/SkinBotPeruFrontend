@@ -16,7 +16,7 @@ BASE_URL = os.getenv("BASE_URL", "http://localhost:8080")
 
 # Configure page
 st.set_page_config(
-    page_title="Patient History",
+    page_title="Historial de Evaluaciones",
     page_icon="📋",
     layout="wide"
 )
@@ -29,18 +29,16 @@ def format_date(date_str):
         return date_str
 
 def create_metrics_card(analysis_doc):
-    # Get the first analysis item
     analysis_item = analysis_doc["analysis"][0] if analysis_doc.get("analysis") else {}
     
     cols = st.columns(3)
     with cols[0]:
-        # Clasificación del modelo de segmentación
-        initial_classification = analysis_item.get('segmentation_analysis', '').split(':')[-1].strip()
-        st.metric("Initial Classification", initial_classification)
+        initial_evaluation = analysis_item.get('segmentation_analysis', '').split(':')[-1].strip()
+        st.metric("Clasificación preliminar inicial", initial_evaluation)
     with cols[1]:
         # Clasificación final del análisis avanzado
         final_classification = analysis_doc.get('final_classification', 'N/A')
-        st.metric("Final Classification", final_classification)
+        st.metric("Classificación de diagnóstico final", final_classification)
     with cols[2]:
         confidence = analysis_item.get('confidence_level', 'N/A')
         if confidence != 'N/A':
@@ -71,10 +69,10 @@ def display_analysis_details(item, headers):
         st.markdown(f"**Comentarios Técnicos**: {item.get('image_technical_commentaries', '')}")
     with cols[1]:
         st.markdown(f"**Otros Diagnósticos Posibles**: {item.get('other_diagnoses', '')}")
-        st.markdown(f"**Influencia de Info Adicional**: {item.get('extra_info_influence', '')}")
+        st.markdown(f"**Influencia de información Adicional**: {item.get('extra_info_influence', '')}")
 
     # Final Assessment
-    st.subheader("Evaluación Final")
+    st.subheader("Evaluación preventiva final: ")
     cols = st.columns(2)
     with cols[0]:
         classification = item.get('advance_classification', '')
@@ -168,8 +166,13 @@ def main():
         st.warning("Please log in to access this page.")
         return
 
-    st.title("Historial de Análisis")
-    
+    st.title("📋 Historial de Evaluaciones Preventivas")
+    st.markdown("""
+    ⚠️ **Importante**: Este historial muestra evaluaciones preliminares asistidas por IA. 
+    No constituyen diagnósticos médicos y no sustituyen la evaluación profesional regular. 
+    Sin embargo, pueden ser útiles para el seguimiento preventivo de manchas cutáneas y su uso ayudarán a los médicos y usuarios.
+    """)
+
     # Filtros
     col1, col2, col3 = st.columns(3)
     with col1:

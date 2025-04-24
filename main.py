@@ -9,7 +9,7 @@ load_dotenv()  # Load environment variables from .env file
 BASE_URL = os.getenv("BASE_URL", "http://localhost:8080")
 
 st.set_page_config(
-    page_title="Aplicación de Detección de Melanoma",
+    page_title="Evaluación Preventiva de manchas cutáneas",
     page_icon="🩺",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -32,18 +32,25 @@ try:
 except:
     st.sidebar.write("Logo here")
 
-st.title("Bienvenido a la Aplicación de Detección de Melanoma 🩺")
+st.title("Bienvenido a MELIA: Evaluación Preventiva de manchas cutáneas 🩺")
 
 st.markdown("""
-### Detección de Melanoma con Precisión
+### Evaluación Preventiva con Tecnología de IA
 
-Esta aplicación permite a los usuarios subir imágenes de la piel para la alerta de examinación para el despistaje de melanoma.
-No solo eso! En MELIA ofrecemos un seguimiento de las lesiones detectadas, permitiendo a los pacientes monitorear el progreso y el tratamiento y hacerlo parte del proceso.
+MELIA es una herramienta de apoyo para la evaluación preventiva de manchas cutáneas. 
+⚠️ **Importante**: Esta herramienta NO realiza diagnósticos médicos y no sustituye la evaluación profesional.
+
+Lo que ofrecemos:
+- Análisis preliminar asistido por IA de imágenes de manchas cutáneas
+- Seguimiento temporal de cambios en las manchas
+- Recomendaciones para el cuidado preventivo de la piel
 
 Navegación:
-- Usa el menú de la izquierda para **Iniciar sesión**, **Subir** una imagen, realizar **Análisis Avanzado**, o ver tu **Historial**.
+- Usa el menú de la izquierda para **Iniciar sesión**, **Subir** una imagen, realizar una **Evaluación Preventiva**, o ver tu **Historial**.
 - Si no tienes una cuenta, regístrate en la sección [Login / Register].
+
+💡 **Recuerda**: La mejor prevención es la revisión regular con un profesional de la salud.
 """)
 
 st.markdown("---")
-st.markdown("© 2025 Equipo de Detección de Melanoma. Todos los derechos reservados.")
+st.markdown("© 2025 Equipo MELIA. Todos los derechos reservados.")

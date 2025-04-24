@@ -13,7 +13,7 @@ load_dotenv()
 BASE_URL = os.getenv("BASE_URL", "http://localhost:8080")
 
 st.set_page_config(
-    page_title="Subir y Segmentar",
+    page_title="Evaluación Inicial",
     layout="wide",
     initial_sidebar_state="auto"
 )
@@ -32,8 +32,14 @@ if "access_token" not in st.session_state or not st.session_state["access_token"
     st.warning("Necesitas iniciar sesión antes de subir imágenes.")
     st.stop()
 
-st.title("🖼️ Subir y Segmentar")
-st.markdown("### Sube una imagen para la detección y segmentación de melanoma")
+st.title("🖼️ Evaluación Inicial de Manchas Cutáneas")
+st.markdown("""
+### Subir imagen para evaluación preventiva
+
+⚠️ **Importante**: Esta herramienta utiliza IA para una evaluación preliminar y NO constituye un diagnóstico médico.
+Sin embargo, es una herramienta de apoyo para el seguimiento preventivo de manchas cutáneas. Y que se espera sea de ayuda para el seguimiento preventivo para los usuarios y médicos.
+La evaluación profesional es siempre necesaria para un correcto seguimiento de la salud cutánea.
+""")
 
 token = st.session_state["access_token"]
 username_state = st.session_state["logged_in_user"]
@@ -42,7 +48,7 @@ col_left, col_right = st.columns(2)
 
 with col_left:
     # Data about the user / lesion
-    st.subheader("Datos de la Lesión")
+    st.subheader("Datos de la Man")
     st.write(f"Usuario actual: `{username_state}` (solo puedes subir para tu cuenta).")
     age = st.number_input("Edad (opcional)", min_value=0, max_value=120, value=30, step=1)
 
@@ -108,7 +114,7 @@ def delete_image(image_id: str, headers: dict) -> bool:
     except requests.RequestException:
         return False
 
-if st.button("🚀 Enviar para segmentación y clasificación"):
+if st.button("🚀 Iniciar Evaluación Preliminar"):
     if not username_state:
         st.warning("⚠️ Usuario no definido.")
     elif not uploaded_file:
@@ -144,9 +150,19 @@ if st.button("🚀 Enviar para segmentación y clasificación"):
                     col1, col2 = st.columns([0.9, 0.1])
                     
                     with col1:
-                        first_class = result_json.get("first_classification", "N/A")
-                        st.markdown(f"**Primera clasificación**: `{first_class}`")
-                    
+                        initial_evaluation = result_json.get("first_classification", "N/A")
+                        st.markdown(f"""
+                        **Evaluación inicial preliminar**: `{initial_evaluation}`
+                        
+                        ⚠️ **Nota importante**: 
+                        - Esta es una primera evaluación automatizada y preliminar
+                        - Los resultados serán refinados en el análisis detallado
+                        - Esta herramienta NO sustituye la evaluación profesional
+                        - Consulte siempre con un profesional de la salud para una evaluación completa
+                        """)
+                        # add that The first segmentation is not final and could be wrong then another model will use that to enhance results
+                        st.warning(f"La primera clasificación no es definitiva y puede ser incorrecta. Será usada y smejorada por otro modelo. ")
+
                     with col2:
                         if st.button("🗑️", key=f"delete_new_img_{image_id}", help="Delete this image"):
                             if st.warning("⚠️ Are you sure you want to delete this image?"):

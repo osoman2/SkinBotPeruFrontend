@@ -64,24 +64,25 @@ def display_analysis_details(analysis):
         st.markdown(f"**Influencia de Info Adicional**: {analysis.get('extra_info_influence', 'N/A')}")
 
     # Final Assessment
-    st.subheader("Evaluación Final")
+    st.subheader("Evaluación Preventiva Preliminar")
     cols = st.columns(2)
     with cols[0]:
-        classification = analysis.get('advance_classification', 'Unknown') # Default 'Unknown'
-        color = "green" if classification.lower() == 'benign' else "red" if classification.lower() == 'malignant' else "orange" # Changed yellow to orange for visibility
+        classification = analysis.get('advance_classification', 'Unknown')
+        color = "green" if classification.lower() == 'benign' else "red" if classification.lower() == 'malignant' else "orange"
         confidence = analysis.get('confidence_level', 0)
         try:
             confidence_val = float(confidence) * 100
         except (ValueError, TypeError):
             confidence_val = 0
-
-        st.markdown(f"**Clasificación pre-dignóstica**: <span style='color:{color}; font-weight:bold;'>{classification}</span>", unsafe_allow_html=True)
-        # Ensure progress bar value is between 0 and 1
         progress_val = min(max(confidence_val / 100, 0.0), 1.0)
-        st.progress(progress_val, text=f"Nivel de Confianza: **{confidence_val:.1f}**%") # Use text arg
+
+        st.warning("⚠️ Esta es una evaluación preliminar asistida por IA que ayudará a los médicos y no constituye un diagnóstico médico conclusivo.")
+        st.markdown(f"**Evaluación preventiva preliminar**: <span style='color:{color}; font-weight:bold;'>{classification}</span>", unsafe_allow_html=True)
+        st.progress(progress_val, text=f"Nivel de Confianza del modelo: **{confidence_val:.1f}**%")
+        st.info("👨‍⚕️ Recuerde: La mejor prevención es la revisión regular con un profesional de la salud.")
 
     with cols[1]:
-        st.markdown(f"**Explicación General**: {analysis.get('final_explanation', 'N/A')}")
+        st.markdown(f"**Observaciones Generales**: {analysis.get('final_explanation', 'N/A')}")
 
 def display_image(image_id):
     """Función para mostrar la imagen segmentada"""
@@ -125,7 +126,7 @@ st.title("🔍 Análisis Avanzado")
 # Small ABCDE guidance
 with st.expander("¿Qué es la regla ABCDE?", expanded=False):
     st.markdown("""
-    **A - Asimetría**: Lesiones que no sean uniformes en forma.<br>
+    **A - Asimetría**: manchas que no sean uniformes en forma.<br>
     **B - Borde**: Bordes irregulares, dentados o mal definidos.<br>
     **C - Color**: Varias tonalidades, incluyendo marrón, negro, rojo, azul o blanco.<br>
     **D - Diámetro**: Mayor de 6 mm.<br>

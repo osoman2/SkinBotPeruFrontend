@@ -8,13 +8,18 @@ from PIL import Image
 # Replace with your FastAPI server base URL
 BASE_URL = "http://127.0.0.1:800"
 
-st.set_page_config(page_title="Melanoma Detection", layout="wide")
+st.set_page_config(page_title="Evaluación Preventiva de manchas", layout="wide")
 
-st.title("Melanoma Detection: Upload & Segmented Preview")
+st.title("Evaluación Preventiva: Análisis y Seguimiento")
 
 col1, col2 = st.columns(2)
 with col1:
-    st.subheader("1. Upload Image")
+    st.subheader("1. Subir Imagen para Evaluación")
+    st.markdown("""
+    ⚠️ **Importante**: Esta herramienta proporciona una evaluación preliminar 
+    asistida por IA y NO constituye un diagnóstico médico.
+    Sin embargo, su uso será útil para el seguimiento preventivo de manchas en la piel de manera preventiva.
+    """)
     username = st.text_input("Username", "")
     timestamp = st.text_input("Timestamp (optional)", "")
     uploaded_file = st.file_uploader("Select an image", type=["jpg", "jpeg", "png"])
@@ -61,7 +66,11 @@ with col1:
                 st.error(f"Error connecting to server: {e}")
 
 with col2:
-    st.subheader("2. Advanced Analysis (Optional)")
+    st.subheader("2. Análisis Preventivo Detallado")
+    st.markdown("""
+    💡 El análisis detallado proporciona una evaluación más completa de las 
+    características observadas en la mancha.
+    """)
     adv_username = st.text_input("Username (Advanced)", key="adv_user")
     if st.button("Start Advanced Analysis"):
         if not adv_username:
@@ -80,7 +89,7 @@ with col2:
 
 st.markdown("---")
 
-st.subheader("List Users & Images")
+st.subheader("Lista de Usuarios con Imágenes")
 if st.button("Fetch All"):
     try:
         list_resp = requests.get(f"{BASE_URL}/list_users_with_images", timeout=30)
