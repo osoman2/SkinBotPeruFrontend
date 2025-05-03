@@ -1,3 +1,4 @@
 python-dotenv
 streamlit-js-eval
 streamlit
+plotly

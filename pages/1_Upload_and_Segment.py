@@ -161,7 +161,7 @@ if st.button("🚀 Iniciar Evaluación Preliminar"):
                         - Consulte siempre con un profesional de la salud para una evaluación completa
                         """)
                         # add that The first segmentation is not final and could be wrong then another model will use that to enhance results
-                        st.warning(f"La primera clasificación no es definitiva y puede ser incorrecta. Será usada y smejorada por otro modelo. ")
+                        st.warning(f"La primera clasificación no es definitiva y puede ser incorrecta. Será usada y mejorada por otro modelo. ")
 
                     with col2:
                         if st.button("🗑️", key=f"delete_new_img_{image_id}", help="Delete this image"):
